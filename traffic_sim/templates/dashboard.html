@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traffic Simulation Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+    <script src="https://unpkg.com/tippy.js@6"></script>
+    <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/themes/light.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+</head>
+<body class="bg-gray-50">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold text-gray-800 mb-8">Traffic Simulation Dashboard</h1>
+        
+        <!-- Metrics Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-lg font-semibold text-gray-700 mb-2">Total Vehicles</h2>
+                <p id="total-vehicles" class="text-3xl font-bold text-blue-600">0</p>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-lg font-semibold text-gray-700 mb-2">Average Speed</h2>
+                <p id="avg-speed" class="text-3xl font-bold text-green-600">0 m/s</p>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-lg font-semibold text-gray-700 mb-2">Network Density</h2>
+                <p id="density" class="text-3xl font-bold text-purple-600">0</p>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-lg font-semibold text-gray-700 mb-2">Active Cameras</h2>
+                <p id="active-cameras" class="text-3xl font-bold text-orange-600">4</p>
+            </div>
+        </div>
+
+        <!-- Camera Feeds Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-lg font-semibold text-gray-700 mb-4">North Camera</h2>
+                <div id="north-camera" class="aspect-video bg-gray-100 rounded"></div>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-lg font-semibold text-gray-700 mb-4">South Camera</h2>
+                <div id="south-camera" class="aspect-video bg-gray-100 rounded"></div>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-lg font-semibold text-gray-700 mb-4">East Camera</h2>
+                <div id="east-camera" class="aspect-video bg-gray-100 rounded"></div>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-lg font-semibold text-gray-700 mb-4">West Camera</h2>
+                <div id="west-camera" class="aspect-video bg-gray-100 rounded"></div>
+            </div>
+        </div>
+
+        <!-- Traffic Chart -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-lg font-semibold text-gray-700 mb-4">Traffic Flow</h2>
+            <canvas id="trafficChart" height="100"></canvas>
+        </div>
+    </div>
+
+    <script>
+        // Update metrics every second
+        function updateMetrics() {
+            fetch('/metrics')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('total-vehicles').textContent = data.total_vehicles;
+                    document.getElementById('avg-speed').textContent = data.average_speed.toFixed(1) + ' m/s';
+                    document.getElementById('density').textContent = data.density.toFixed(2);
+                });
+        }
+
+        // Initialize traffic chart
+        const ctx = document.getElementById('trafficChart').getContext('2d');
+        const trafficChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: Array(10).fill(''),
+                datasets: [{
+                    label: 'Vehicle Count',
+                    data: Array(10).fill(0),
+                    borderColor: 'rgb(59, 130, 246)',
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Update chart data
+        function updateChart() {
+            fetch('/metrics')
+                .then(response => response.json())
+                .then(data => {
+                    trafficChart.data.datasets[0].data.shift();
+                    trafficChart.data.datasets[0].data.push(data.total_vehicles);
+                    trafficChart.update();
+                });
+        }
+
+        // Update camera feeds
+        function updateCameraFeeds() {
+            const cameras = ['north', 'south', 'east', 'west'];
+            cameras.forEach(camera => {
+                const img = new Image();
+                img.src = `/video_feed?camera=${camera}&t=${Date.now()}`;
+                document.getElementById(`${camera}-camera`).innerHTML = '';
+                document.getElementById(`${camera}-camera`).appendChild(img);
+            });
+        }
+
+        // Update everything periodically
+        setInterval(updateMetrics, 1000);
+        setInterval(updateChart, 1000);
+        setInterval(updateCameraFeeds, 1000);
+    </script>
+</body>
+</html>
