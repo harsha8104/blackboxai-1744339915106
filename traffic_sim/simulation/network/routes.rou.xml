@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/routes_file.xsd">
+    <!-- Vehicle Types -->
+    <vType id="passenger" length="5.0" minGap="2.5" maxSpeed="16.67" accel="2.6" decel="4.5" sigma="0.5" color="1,1,0"/>
+    <vType id="bus" length="12.0" minGap="3.0" maxSpeed="13.89" accel="1.2" decel="4.0" sigma="0.5" color="1,0,0"/>
+    <vType id="truck" length="15.0" minGap="3.5" maxSpeed="11.11" accel="0.8" decel="3.5" sigma="0.5" color="0,0,1"/>
+
+    <!-- Routes -->
+    <route id="route1" edges="A0A1 A1B1 B1B0"/>
+    <route id="route2" edges="B0B1 B1A1 A1A0"/>
+    <route id="route3" edges="A0B0 B0B1 B1A1"/>
+    <route id="route4" edges="B1B0 B0A0 A0A1"/>
+
+    <!-- Morning Peak Traffic (7:00 - 9:00) -->
+    <flow id="morning_flow1" type="passenger" route="route1" begin="25200" end="32400" probability="0.3"/>
+    <flow id="morning_flow2" type="passenger" route="route2" begin="25200" end="32400" probability="0.3"/>
+    <flow id="morning_flow3" type="passenger" route="route3" begin="25200" end="32400" probability="0.2"/>
+    <flow id="morning_flow4" type="passenger" route="route4" begin="25200" end="32400" probability="0.2"/>
+    
+    <!-- Bus Routes During Morning -->
+    <flow id="morning_bus1" type="bus" route="route1" begin="25200" end="32400" probability="0.05"/>
+    <flow id="morning_bus2" type="bus" route="route2" begin="25200" end="32400" probability="0.05"/>
+
+    <!-- Evening Peak Traffic (16:00 - 18:00) -->
+    <flow id="evening_flow1" type="passenger" route="route2" begin="57600" end="64800" probability="0.3"/>
+    <flow id="evening_flow2" type="passenger" route="route1" begin="57600" end="64800" probability="0.3"/>
+    <flow id="evening_flow3" type="passenger" route="route4" begin="57600" end="64800" probability="0.2"/>
+    <flow id="evening_flow4" type="passenger" route="route3" begin="57600" end="64800" probability="0.2"/>
+
+    <!-- Truck Routes (Distributed throughout the day) -->
+    <flow id="truck_route1" type="truck" route="route1" begin="28800" end="64800" probability="0.05"/>
+    <flow id="truck_route2" type="truck" route="route2" begin="28800" end="64800" probability="0.05"/>
+
+    <!-- Off-Peak Traffic -->
+    <flow id="offpeak_flow1" type="passenger" route="route1" begin="32400" end="57600" probability="0.1"/>
+    <flow id="offpeak_flow2" type="passenger" route="route2" begin="32400" end="57600" probability="0.1"/>
+</routes>
