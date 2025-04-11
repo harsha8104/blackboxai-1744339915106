@@ -11,15 +11,21 @@
     <route id="route3" edges="A0B0 B0B1 B1A1"/>
     <route id="route4" edges="B1B0 B0A0 A0A1"/>
 
+    <!-- Continuous Base Traffic (starts immediately) -->
+    <flow id="base_flow1" type="passenger" route="route1" begin="0" end="86400" probability="0.15"/>
+    <flow id="base_flow2" type="passenger" route="route2" begin="0" end="86400" probability="0.15"/>
+    <flow id="base_flow3" type="passenger" route="route3" begin="0" end="86400" probability="0.1"/>
+    <flow id="base_flow4" type="passenger" route="route4" begin="0" end="86400" probability="0.1"/>
+
+    <!-- Continuous Bus Service -->
+    <flow id="bus_service1" type="bus" route="route1" begin="0" end="86400" probability="0.05"/>
+    <flow id="bus_service2" type="bus" route="route2" begin="0" end="86400" probability="0.05"/>
+
     <!-- Morning Peak Traffic (7:00 - 9:00) -->
     <flow id="morning_flow1" type="passenger" route="route1" begin="25200" end="32400" probability="0.3"/>
     <flow id="morning_flow2" type="passenger" route="route2" begin="25200" end="32400" probability="0.3"/>
     <flow id="morning_flow3" type="passenger" route="route3" begin="25200" end="32400" probability="0.2"/>
     <flow id="morning_flow4" type="passenger" route="route4" begin="25200" end="32400" probability="0.2"/>
-    
-    <!-- Bus Routes During Morning -->
-    <flow id="morning_bus1" type="bus" route="route1" begin="25200" end="32400" probability="0.05"/>
-    <flow id="morning_bus2" type="bus" route="route2" begin="25200" end="32400" probability="0.05"/>
 
     <!-- Evening Peak Traffic (16:00 - 18:00) -->
     <flow id="evening_flow1" type="passenger" route="route2" begin="57600" end="64800" probability="0.3"/>
@@ -27,11 +33,7 @@
     <flow id="evening_flow3" type="passenger" route="route4" begin="57600" end="64800" probability="0.2"/>
     <flow id="evening_flow4" type="passenger" route="route3" begin="57600" end="64800" probability="0.2"/>
 
-    <!-- Truck Routes (Distributed throughout the day) -->
-    <flow id="truck_route1" type="truck" route="route1" begin="28800" end="64800" probability="0.05"/>
-    <flow id="truck_route2" type="truck" route="route2" begin="28800" end="64800" probability="0.05"/>
-
-    <!-- Off-Peak Traffic -->
-    <flow id="offpeak_flow1" type="passenger" route="route1" begin="32400" end="57600" probability="0.1"/>
-    <flow id="offpeak_flow2" type="passenger" route="route2" begin="32400" end="57600" probability="0.1"/>
+    <!-- Continuous Truck Traffic -->
+    <flow id="truck_route1" type="truck" route="route1" begin="0" end="86400" probability="0.03"/>
+    <flow id="truck_route2" type="truck" route="route2" begin="0" end="86400" probability="0.03"/>
 </routes>
