@@ -1,0 +1,21 @@
+# Machine Learning Configuration
+ml:
+  model:
+    type: "traffic_predictor"
+    input_features:
+      - vehicle_count
+      - avg_speed
+      - time_of_day
+      - historical_patterns
+    output:
+      - congestion_prediction
+      - optimal_signal_timing
+
+  training:
+    epochs: 100
+    batch_size: 32
+    learning_rate: 0.001
+    validation_split: 0.2
+
+  inference:
+    threshold: 0.5  # Threshold for congestion prediction
