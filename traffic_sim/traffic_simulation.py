@@ -10,7 +10,8 @@ import logging
 from flask import Flask, jsonify, render_template, Response, request
 
 # Setup Flask app
-app = Flask(__name__)
+app = Flask(__name__, 
+           template_folder=os.path.join(os.path.dirname(__file__), 'templates'))
 
 class Camera:
     def __init__(self, camera_id, position, detection_radius):
@@ -371,35 +372,45 @@ def main():
     global sim_controller, video_streams
     
     # Load configuration
-    config_path = os.path.join(os.path.dirname(__file__), 'config/simulation_config.yaml')
-    
-    # Initialize the simulation controller
-    sim_controller = SimulationController(config_path)
-    
-    # Initialize video streams
-    video_streams.update({
-        'north': VideoStream('cam_north', sim_controller),
-        'south': VideoStream('cam_south', sim_controller),
-        'east': VideoStream('cam_east', sim_controller),
-        'west': VideoStream('cam_west', sim_controller)
-    })
-    
     try:
-        # Start the simulation in simulation-only mode (since we're in web environment)
+        # Load configuration and initialize components
+        config_path = os.path.join(os.path.dirname(__file__), 'config/simulation_config.yaml')
+        if not os.path.exists(config_path):
+            raise FileNotFoundError(f"Configuration file not found at {config_path}")
+        
+        # Initialize the simulation controller
+        sim_controller = SimulationController(config_path)
+        
+        # Initialize video streams
+        video_streams.update({
+            'north': VideoStream('cam_north', sim_controller),
+            'south': VideoStream('cam_south', sim_controller),
+            'east': VideoStream('cam_east', sim_controller),
+            'west': VideoStream('cam_west', sim_controller)
+        })
+
+        # Start the simulation in simulation-only mode
         print("Starting traffic simulation in simulation-only mode...")
         sim_controller.start_simulation()
         
-        # Run the Flask app
-        print("Starting web interface on port 8000...")
         # Kill any process using port 8000
+        print("Starting web interface on port 8000...")
         os.system('fuser -k 8000/tcp')
+        
         # Start the Flask app
         app.run(host='0.0.0.0', port=8000, debug=True)
         
+    except FileNotFoundError as e:
+        print(f"Configuration error: {str(e)}")
+        sys.exit(1)
     except KeyboardInterrupt:
         print("Server interrupted. Closing...")
+    except Exception as e:
+        print(f"Error running traffic simulation: {str(e)}")
+        sys.exit(1)
     finally:
-        sim_controller.close()
+        if sim_controller:
+            sim_controller.close()
 
 if __name__ == "__main__":
     main()
