@@ -1,7 +1,7 @@
 # SUMO Simulation Configuration
 simulation:
   step_time: 0.1  # seconds
-  max_steps: 3600  # 1 hour simulation
+  max_steps: 86400  # 24 hour simulation (86400 steps = 24 hours)
   gui: false      # Disable SUMO GUI for web environment
 
 # Network Configuration
@@ -35,17 +35,19 @@ traffic:
   vehicle_types:
     - type: 'passenger'
       length: 5.0
-      max_speed: 16.67
+      max_speed: 16.67  # 60 km/h
       probability: 0.7
     - type: 'bus'
       length: 12.0
-      max_speed: 13.89
+      max_speed: 13.89  # 50 km/h
       probability: 0.2
     - type: 'truck'
       length: 15.0
-      max_speed: 11.11
+      max_speed: 11.11  # 40 km/h
       probability: 0.1
   flow_rates:
+    base_flow:
+      vehicles_per_hour: 500  # Continuous base traffic
     morning_peak:
       start_time: '07:00'
       end_time: '09:00'
@@ -54,5 +56,4 @@ traffic:
       start_time: '16:00'
       end_time: '18:00'
       vehicles_per_hour: 1500
-    # Increase the number of vehicles in the simulation
-    additional_vehicles: 50  # New parameter to increase vehicle count
+    additional_vehicles: 100  # Increased from 50 to 100
