@@ -1,0 +1,58 @@
+# SUMO Simulation Configuration
+simulation:
+  step_time: 0.1  # seconds
+  max_steps: 3600  # 1 hour simulation
+  gui: false      # Disable SUMO GUI for web environment
+
+# Network Configuration
+network:
+  size:
+    width: 1000   # meters
+    height: 1000  # meters
+  intersection:
+    type: "4-way"
+    position: [500, 500]  # center of network
+
+# Camera Configuration
+cameras:
+  update_frequency: 1.0  # seconds
+  positions:
+    - id: 'cam_north'
+      location: [500, 600]
+      detection_radius: 50
+    - id: 'cam_south'
+      location: [500, 400]
+      detection_radius: 50
+    - id: 'cam_east'
+      location: [600, 500]
+      detection_radius: 50
+    - id: 'cam_west'
+      location: [400, 500]
+      detection_radius: 50
+
+# Traffic Configuration
+traffic:
+  vehicle_types:
+    - type: 'passenger'
+      length: 5.0
+      max_speed: 16.67
+      probability: 0.7
+    - type: 'bus'
+      length: 12.0
+      max_speed: 13.89
+      probability: 0.2
+    - type: 'truck'
+      length: 15.0
+      max_speed: 11.11
+      probability: 0.1
+  flow_rates:
+    morning_peak:
+      start_time: '07:00'
+      end_time: '09:00'
+      vehicles_per_hour: 1200
+    evening_peak:
+      start_time: '16:00'
+      end_time: '18:00'
+      vehicles_per_hour: 1500
+    # Increase the number of vehicles in the simulation
+    additional_vehicles: 50  # New parameter to increase vehicle count
